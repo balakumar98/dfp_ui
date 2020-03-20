@@ -1,0 +1,133 @@
+<br><br><br>
+<style>
+    table { 
+  color: #333;
+  font-family: Helvetica, Arial, sans-serif;
+  width: 640px;
+  /* Table reset stuff */
+  border-collapse: collapse; border-spacing: 0; 
+}
+		
+td, th {  border: 0 none; height: 30px; }
+			
+th {
+  /* Gradient Background */
+	background: linear-gradient(#333 0%,#444 100%);
+	color: #FFF; font-weight: bold;
+	height: 40px;
+  text-align: center;
+}
+		
+td { background: #FAFAFA; text-align: center; }
+
+/* Zebra Stripe Rows */
+		
+tr:nth-child(even) td { background: #EEE; } 
+tr:nth-child(odd) td { background: #FDFDFD; }
+
+/* First-child blank cells! */
+
+/* Add border-radius to specific cells! */
+tr:first-child th:nth-child(2) { 
+  border-radius: 5px 0 0 0; 
+} 
+
+tr:first-child th:last-child { 
+  border-radius: 0 5px 0 0; 
+}
+
+.tab-content {
+  padding : 5px 15px;
+}
+
+#exTab2 h2 {
+  padding : 5px 15px;
+}
+
+</style>
+
+
+<div class="container">
+    <div class="card">
+      <div class="card-header text-center">
+          <h2> Groups Management </h2>
+      </div>
+      <div class="card-body">
+          <button class="btn btn-primary" type="button" ng-show="management.loading" disabled>
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Loading...
+            </button>
+          <br>
+            <div class = "panel panel-primary">
+              <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#addNewGroupModal">Add New Group</button>
+              <br><br>
+              <form>
+                <div class="form-group">
+                  <div class="input-group">
+                    <div class="input-group-addon"><i class="fa fa-search"></i></div>
+                    <input type="text" class="form-control" placeholder="Search" ng-model="searchUsername">
+                  </div>      
+                </div>
+              </form>
+              <p><small>Click on column names to sort the records.</small></p>
+                <table class = "table">
+                    <tr>
+                        <th> Group (No. of users) </th>
+                        <th> Sub Groups </th>
+                    </tr>
+                    <tr ng-repeat="group in management.groups">
+                        <td>{{group.group}}</td>
+                        <td> 
+                            <center>
+                            <table>
+                                <tr ng-repeat="item in group.subGroups">
+                                    <td>{{ item.name }} ({{ item.count }})</td>
+                                </tr>
+                            </table>
+                           </center>
+
+                        </td>
+                    </tr>
+                 
+                </table>
+            </div>
+          
+          <div class = "row show-hide-message" ng-show="management.successMessage">
+              <div class = "alert alert-success"> {{ management.successMessage }}</div>
+          </div>
+          <br>
+          
+          <div class = "row show-hide-message" ng-show="management.errorMessage">
+              <div class = "alert alert-danger"> {{ management.errorMessage }} </div>
+          </div>
+
+      </div>
+  </div>
+
+
+</div>
+
+
+<div class="modal fade" id="addNewGroupModal" role="dialog">
+  <div class="modal-dialog">
+  
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title"> Add new Group </h4>
+      </div>
+      <div class="modal-body">
+        
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<br>
+<br>

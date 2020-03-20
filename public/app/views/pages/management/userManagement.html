@@ -1,0 +1,272 @@
+<br><br><br>
+<style>
+    table { 
+  color: #333;
+  font-family: Helvetica, Arial, sans-serif;
+  width: 640px;
+  /* Table reset stuff */
+  border-collapse: collapse; border-spacing: 0; 
+}
+		
+td, th {  border: 0 none; height: 30px; }
+			
+th {
+  /* Gradient Background */
+	background: linear-gradient(#333 0%,#444 100%);
+	color: #FFF; font-weight: bold;
+	height: 40px;
+  text-align: center;
+}
+		
+td { background: #FAFAFA; text-align: center; }
+
+/* Zebra Stripe Rows */
+		
+tr:nth-child(even) td { background: #EEE; } 
+tr:nth-child(odd) td { background: #FDFDFD; }
+
+/* First-child blank cells! */
+
+/* Add border-radius to specific cells! */
+tr:first-child th:nth-child(2) { 
+  border-radius: 5px 0 0 0; 
+} 
+
+tr:first-child th:last-child { 
+  border-radius: 0 5px 0 0; 
+}
+
+.tab-content {
+  padding : 5px 15px;
+}
+
+#exTab2 h2 {
+  padding : 5px 15px;
+}
+</style>
+
+<div class = "container" >
+    <div class="card">
+      <div class="card-header text-center">
+          <h2> User Management </h2>
+      </div>
+      <div class="card-body">
+          <button class="btn btn-primary" type="button" ng-show="management.loading" disabled>
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Loading...
+            </button>
+          <br>
+            <div class = "panel panel-primary">
+              <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#addNewUserModal">Add New User</button>
+              <br><br>
+              <form>
+                <div class="form-group">
+                  <div class="input-group">
+                    <div class="input-group-addon"><i class="fa fa-search"></i></div>
+                    <input type="text" class="form-control" placeholder="Search" ng-model="searchUsername">
+                  </div>      
+                </div>
+              </form>
+              <p><small>Click on column names to sort the records.</small></p>
+                <table class = "table">
+                    <tr>
+                        <th>
+                          <a href="#" ng-click="sortType = 'firstname'; sortReverse = !sortReverse">
+                            Name
+                            <span ng-show="sortType == 'firstname' && !sortReverse" class="fa fa-caret-down"></span>
+                            <span ng-show="sortType == 'firstname' && sortReverse" class="fa fa-caret-up"></span>
+                          </a>
+                        </th>
+
+                        <th>
+                          <a href="#" ng-click="sortType = 'username'; sortReverse = !sortReverse">
+                            Username
+                              <span ng-show="sortType == 'username' && !sortReverse" class="fa fa-caret-down"></span>
+                              <span ng-show="sortType == 'username' && sortReverse" class="fa fa-caret-up"></span>
+                            </a>
+                        </th>
+                        
+                        <th>
+                          <a href="#" ng-click="sortType = 'email'; sortReverse = !sortReverse">
+                              E-Mail
+                              <span ng-show="sortType == 'email' && !sortReverse" class="fa fa-caret-down"></span>
+                              <span ng-show="sortType == 'email' && sortReverse" class="fa fa-caret-up"></span>
+                            </a>
+                        </th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    <tr ng-repeat="person in management.users | limitTo: management.limit | orderBy:sortType:sortReverse | filter:searchUsername ">
+                        <td>{{ person.firstname }}</td>
+                        <td>{{ person.username }} </td>
+                        <td>{{ person.email }}</td>
+                        <td>{{ person.status }}</td>
+                        <td>
+                            <button type="button" ng-show = "person.status == 'Inactive'" ng-click = "management.activateUser(person);" class = "btn btn-success">&nbsp;&nbsp;Activate&nbsp;&nbsp;</button>
+                            <button type="button" ng-show = "person.status == 'Active'" ng-click = "management.deactivateUser(person._id);" class = "btn btn-warning">Deactivate</button>
+                          &nbsp;&nbsp;
+                            <a href="/editUser/{{person.username}}">
+                                <button type="button" ng-show = "management.editAccess" class = "btn btn-primary">Edit</button>
+                            </a>&nbsp;&nbsp;
+                            <button type="button" ng-show ="management.deleteAccess" ng-click="management.deleteUser(person.username)" class = "btn btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+      </div>
+  </div>
+
+  <div class="modal fade" id="activateUserModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header text-center">
+          <h4 class="modal-title text-center">Activate User Account</h4>
+        </div>
+
+        <div class="modal-body">
+          <table class="table">
+            <tr>
+              <td><b>Username :</b></td>
+              <td>{{management.activatingUsername}}</td>
+            </tr>
+            <tr>
+              <td><b>Full Name :</b></td>
+              <td>{{management.activatingFullname}}</td>
+            </tr>
+            <tr>
+              <td><b>Email-ID :</b></td>
+              <td>{{management.activatingEmail}}</td>
+            </tr>
+          </table>
+          <form name = "activateForm" ng-submit="management.activateUserFinal(activateData);" novalidate>
+          <select id="group" class="form-control" name="group" ng-model="management.activateData.group" ng-change="management.updateSubGroup()" placeholder="Group" autocomplete="off" required>
+            <option disabled value="" selected>Group</option>
+            <option ng-repeat = "group in management.groups" value="{{group.group}}"> {{group.group}} </option>
+          </select> <br>
+
+          <select id="subGroup" class="form-control" name = "subGroup" ng-model="management.activateData.subGroup" placeholder="Sub Group"  autocomplete="off" required>
+            <option disabled selected value="">SubGroup</option>
+            <option ng-repeat = "subGroup in management.subGroups" value="{{subGroup.name}}">{{subGroup.name}}</option>
+          </select><br>
+
+          <select id="role" class="form-control" name = "role" ng-model="management.activateData.role" placeholder="Role" autocomplete="off" required>
+            <option value="" disabled selected>Role</option>
+            <option value = "Owner">Owner</option>
+            <option value = "Developer">Developer</option>
+            <option value = "Tester">Tester</option>
+            <option value = "Project_admin">Project Admin</option>
+            <option value = "Cluster_admin">Cluster Admin</option>
+          </select><br>
+
+          <button class= "btn btn-primary" type="submit" >Activate</button>&nbsp;&nbsp;
+          
+          </form>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+
+  <div class="modal fade" id="addNewUserModal" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" style="width: 900px;">
+    
+      <!-- Modal content-->
+      <div class="modal-content" style="width: 800px;">
+        <div class="modal-header text-center">
+          <h4 class="modal-title">New user registration</h4>
+        </div>
+        <div class="modal-body">
+          <form name = "regForm" ng-submit="management.regUser(regData);" novalidate>
+            <div class = "form-row" >
+                <div class = "col">      
+                        <label>First Name</label>
+                        <input class="form-control" type="text" name="firstname" placeholder="Enter First Name" aria-describedBy="firstnameHelpBlock" autocomplete = "off" ng-model = "management.regData.firstname" required>
+                        <small id="firstnameHelpBlock" class="form-text text-muted">
+                            Your first name must be 3-20 characters long, contain letters and must <b>not</b> contain numbers special characters, or emoji.
+                        </small>
+                        <small class = "help-block" ng-show="(!regForm.firstname.$pristine && regForm.firstname.$error.required) || (regForm.$submitted && regForm.firstname.$error.required)" style="color: red;">This field is required.</small>
+                </div>
+                <div class = "col">
+                    <label>Last Name</label>
+                    <input class="form-control" type="text" name="lastname" placeholder="Enter Last Name" autocomplete = "off" ng-model = "management.regData.lastname">
+                    <small id="firstnameHelpBlock" class="form-text text-muted">
+                        (Optional) Your last name must contain letters and must <b>not</b> contain numbers special characters, or emoji.
+                    </small>
+                </div>
+            </div>
+            <br>
+            <label>Email</label>
+            <input class="form-control" type="text" name="email" placeholder="Enter Email address" ng-blur="management.checkEmail(regData);" autocomplete = "off" ng-model = "management.regData.email" required>
+            <span ng-show="management.checkingEmail();" class="glyphicon glyphicon-repeat"></span><p class = "help-block" ng-show="management.emailMsg"><small style="color: red;">{{ management.emailMsg }}</small></p>
+            <small class = "help-block" ng-show="(!regForm.email.$pristine && regForm.email.$error.required) || (regForm.$submitted && regForm.email.$error.required)" style="color: red;">This field is required.</small>
+            <br>
+            <label>User Name</label>
+            <input class="form-control" type="text" name="username" placeholder="Enter User name" ng-blur="management.checkUsername(regData);" aria-describeBy="usernameHelpBlock" autocomplete = "off" ng-model = "management.regData.username" required>
+            <small id="usernameHelpBlock" class="form-text text-muted">
+                Your username must be unique, 8-20 characters long, contain letters <b>or</b> numbers, and must not contain spaces, special characters, or emoji.
+            </small>
+            <span ng-show="management.checkingUsername();" class="glyphicon glyphicon-repeat"></span><p class = "help-block" ng-show="management.usernameMsg"><small style="color: red;">{{ management.usernameMsg }}</small></p>
+            <small class = "help-block" ng-show="(!regForm.username.$pristine && regForm.username.$error.required) || (regForm.$submitted && regForm.username.$error.required)" style="color: red;">This field is required.</small>
+            <br>
+            <label>Password</label>
+            <input class="form-control" type="password" name="password" placeholder="Enter password" aria-describedBy="passwordHelpBlock" autocomplete = "off" ng-model = "management.regData.password" required>
+            <small id="passwordHelpBlock" class="form-text text-muted">
+                Your password must be 8-20 characters long, contain letters, special characters <b>and</b> numbers, and must not contain spaces or emoji.
+            </small>
+            <p class = "help-block" ng-show="(!regForm.password.$pristine && regForm.password.$error.required) || (regForm.$submitted && regForm.password.$error.required)" style="color: red;">This field is required.</p>
+            <br>
+            <label>Confirm Password</label>
+            <input class="form-control" type="password" name="password"  placeholder="Enter password" aria-describedBy="passwordHelpBlock" autocomplete = "off" ng-model="confirm" passwordMatch="{{[management.regData.password]}}" required>
+            <p class = "help-block" ng-show="(!regForm.password.$pristine && regForm.password.$error.required) || (regForm.$submitted && regForm.password.$error.required)" style="color: red;">This field is required.</p>
+            <p class = "help-block" ng-show="!confirmed" style="color: red;">Passwords do not match.</p>
+            <br>
+            <div class="custom-control custom-checkbox mr-sm-2">
+                <input type="checkbox" class="custom-control-input" id="customControlAutosizing" onchange="document.getElementById('register').disabled = !this.checked;">
+                <label class="custom-control-label" for="customControlAutosizing"><small>I agree to the terms and conditions.</small> </label>
+            </div>
+            <br>
+            <button class= "btn btn-primary" type="submit" ng-show="!management.loading" id="register" disabled >Sign Up</button> 
+        </form>
+
+        <button class="btn btn-primary" type="button" ng-show="management.loading" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Loading...
+          </button>
+        <br>
+        
+        <div class = "row show-hide-message" ng-show="management.successMessage">
+            <div class = "alert alert-success"> {{ management.successMessage }}</div>
+        </div>  
+        <div class = "row show-hide-message" ng-show="management.errorMessage">
+            <div class = "alert alert-danger"> {{ management.errorMessage }} </div>
+        </div>
+
+
+        </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  <br><br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+

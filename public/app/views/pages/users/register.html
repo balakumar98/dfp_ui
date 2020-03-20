@@ -1,0 +1,90 @@
+<br><br><br>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<div class = "container">
+
+
+<div class="card">
+    
+        <div class="card-header text-center">
+            <h2>User Registration</h2>
+        </div>
+        <div class="card-body">
+        <form name = "regForm" ng-submit="register.regUser(regData);" novalidate>
+            <div class = "form-row" >
+                <div class = "col">      
+                        <label>First Name</label>
+                        <input class="form-control" type="text" name="firstname" placeholder="Enter First Name" aria-describedBy="firstnameHelpBlock" autocomplete = "off" ng-model = "register.regData.firstname" required>
+                        <small id="firstnameHelpBlock" class="form-text text-muted">
+                            Your first name must be 3-20 characters long, contain letters and must <b>not</b> contain numbers special characters, or emoji.
+                        </small>
+                        <small class = "help-block" ng-show="(!regForm.firstname.$pristine && regForm.firstname.$error.required) || (regForm.$submitted && regForm.firstname.$error.required)" style="color: red;">This field is required.</small>
+                </div>
+                <div class = "col">
+                    <label>Last Name</label>
+                    <input class="form-control" type="text" name="lastname" placeholder="Enter Last Name" autocomplete = "off" ng-model = "register.regData.lastname">
+                    <small id="firstnameHelpBlock" class="form-text text-muted">
+                        (Optional) Your last name must contain letters and must <b>not</b> contain numbers special characters, or emoji.
+                    </small>
+                </div>
+            </div>
+            <br>
+            
+            <label>Email</label>
+            <input class="form-control" type="text" name="email" placeholder="Enter Email address" ng-blur="register.checkEmail(regData);" autocomplete = "off" ng-model = "register.regData.email" required>
+            <span ng-show="register.checkingEmail();" class="glyphicon glyphicon-repeat"></span><p class = "help-block" ng-show="register.emailMsg"><small style="color: red;">{{ register.emailMsg }}</small></p>
+            <small class = "help-block" ng-show="(!regForm.email.$pristine && regForm.email.$error.required) || (regForm.$submitted && regForm.email.$error.required)" style="color: red;">This field is required.</small>
+            <br>
+
+            <label>User Name</label>
+            <input class="form-control" type="text" name="username" placeholder="Enter User name" ng-blur="register.checkUsername(regData);" aria-describeBy="usernameHelpBlock" autocomplete = "off" ng-model = "register.regData.username" required>
+            <small id="usernameHelpBlock" class="form-text text-muted">
+                Your username must be unique, 8-20 characters long, contain letters <b>or</b> numbers, and must not contain spaces, special characters, or emoji.
+            </small>
+            <span ng-show="register.checkingUsername();" class="glyphicon glyphicon-repeat"></span><p class = "help-block" ng-show="register.usernameMsg"><small style="color: red;">{{ register.usernameMsg }}</small></p>
+            <small class = "help-block" ng-show="(!regForm.username.$pristine && regForm.username.$error.required) || (regForm.$submitted && regForm.username.$error.required)" style="color: red;">This field is required.</small>
+            <br>
+
+            <label>Password</label>
+            <input class="form-control" type="password" name="password" placeholder="Enter password" aria-describedBy="passwordHelpBlock" autocomplete = "off" ng-model = "register.regData.password" required>
+            <small id="passwordHelpBlock" class="form-text text-muted">
+                Your password must be 8-20 characters long, contain letters, special characters <b>and</b> numbers, and must not contain spaces or emoji.
+            </small>
+            <p class = "help-block" ng-show="(!regForm.password.$pristine && regForm.password.$error.required) || (regForm.$submitted && regForm.password.$error.required)" style="color: red;">This field is required.</p>
+            <br>
+
+            <label>Confirm Password</label>
+            <input class="form-control" type="password" name="password"  placeholder="Enter password" aria-describedBy="passwordHelpBlock" autocomplete = "off" ng-model="confirm" match="{{[register.regData.password]}}" required>
+            <p class = "help-block" ng-show="(!regForm.password.$pristine && regForm.password.$error.required) || (regForm.$submitted && regForm.password.$error.required)" style="color: red;">This field is required.</p>
+            <p class = "help-block" ng-show="!confirmed" style="color: red;">Passwords do not match.</p>
+            <br>
+            <div class="custom-control custom-checkbox mr-sm-2">
+                <input type="checkbox" class="custom-control-input" id="customControlAutosizing" onchange="document.getElementById('register').disabled = !this.checked;">
+                <label class="custom-control-label" for="customControlAutosizing"><small>I agree to the terms and conditions.</small> </label>
+            </div>
+            <br>
+            <button class= "btn btn-primary" type="submit" ng-show="!register.loading" id="register" disabled >Sign Up</button> 
+        </form>
+
+        <br>
+
+        <button class="btn btn-primary" type="button" ng-show="register.loading" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Loading...
+          </button>
+        <br>
+        
+        <div class = "row show-hide-message" ng-show="register.successMessage">
+            <div class = "alert alert-success"> {{ register.successMessage }}</div>
+        </div>
+        <br>
+        
+        <div class = "row show-hide-message" ng-show="register.errorMessage">
+            <div class = "alert alert-danger"> {{ register.errorMessage }} </div>
+        </div>
+         
+         
+    </div>
+</div>
+    
+</div>
+<br><br><br>

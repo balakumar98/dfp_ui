@@ -1,0 +1,36 @@
+<br><br><br>
+<div class = "container">
+
+
+    <div class="card">
+        <div class="card-header text-center">
+            <h2>User Login</h2>
+        </div>
+        <div class="card-body">
+            <form ng-submit="main.doLogin(loginData);">
+                <label>User Name</label>
+                <input class="form-control" type="text" name="username" placeholder="Enter User name" autocomplete = "off" ng-model = "main.loginData.username">
+                <br>
+                <label>Password</label>
+                <input class="form-control" type="password" name="password" placeholder="Enter password" ng-model = "main.loginData.password">
+                <br>
+                <button class= "btn btn-primary" type="submit" ng-show="!main.loading" >Login</button> 
+            </form>
+            <button class="btn btn-primary" type="button" ng-show="main.loading" disabled>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Loading...
+              </button>
+            <br>
+            
+            <div class = "row show-hide-message" ng-show="main.successMessage">
+                <div class = "alert alert-success"> {{ main.successMessage }}</div>
+            </div>
+            <br>
+            
+            <div class = "row show-hide-message" ng-show="main.errorMessage">
+                <div class = "alert alert-danger"> {{ main.errorMessage }} </div>
+            </div>
+
+        </div>
+    </div>
+</div>
